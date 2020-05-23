@@ -21,12 +21,17 @@ public class FinnhubRestCallerImpl implements FinnHubRestCaller {
 
     private static final String URL = "https://finnhub.io/api/v1/stock/";
 
-    RestTemplate rest;
+    private RestTemplate rest;
 
     @PostConstruct
-    public void setup() {
-        rest = new RestTemplate();
+    protected void setup() {
+        this.rest = new RestTemplate();
         // setting token for every request
+        this.setRequestToken();
+    }
+
+    protected void setRequestToken() {
+        assert this.rest != null : "RestTemplate must be initialised";
         Map<String, String> defaultVars = new HashMap<>();
         defaultVars.put("token", token);
         rest.setDefaultUriVariables(defaultVars);

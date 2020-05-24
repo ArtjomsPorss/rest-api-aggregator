@@ -41,11 +41,11 @@ public class FinnhubRestCallerImpl implements FinnHubRestCaller {
         return rest.getForObject(generateUrl("exchange"), StockExchange[].class);
     }
 
-    private String generateUrl(String endpoint) {
+    protected String generateUrl(String endpoint) {
         return URL + endpoint + generateToken();
     }
 
-    private String generateToken() {
+    protected String generateToken() {
         return "?token=" + token;
     }
 }

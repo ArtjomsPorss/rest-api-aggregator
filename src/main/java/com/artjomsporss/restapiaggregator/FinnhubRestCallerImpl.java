@@ -1,6 +1,6 @@
 package com.artjomsporss.restapiaggregator;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.artjomsporss.restapiaggregator.exchange.Exchange;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
@@ -37,8 +37,8 @@ public class FinnhubRestCallerImpl implements FinnHubRestCaller {
         rest.setDefaultUriVariables(defaultVars);
     }
 
-    public StockExchange[] getExchange() {
-        return rest.getForObject(generateUrl("exchange"), StockExchange[].class);
+    public Exchange[] getExchange() {
+        return rest.getForObject(generateUrl("exchange"), Exchange[].class);
     }
 
     protected String generateUrl(String endpoint) {

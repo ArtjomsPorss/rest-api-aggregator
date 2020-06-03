@@ -84,7 +84,7 @@ public class FinnhubRestCallerImplTest {
         RestTemplate mockRestTemplate = mock(RestTemplate.class);
         ReflectionTestUtils.setField(restCaller, "rest", mockRestTemplate);
 
-        restCaller.getExchange();
+        restCaller.getExchangeList();
         verify(restCaller).generateUrl(anyString());
     }
 
@@ -93,7 +93,7 @@ public class FinnhubRestCallerImplTest {
         RestTemplate mockRestTemplate = mock(RestTemplate.class);
         ReflectionTestUtils.setField(restCaller, "rest", mockRestTemplate);
 
-        restCaller.getExchange();
+        restCaller.getExchangeList();
         verify(mockRestTemplate).getForObject(anyString(), any());
     }
 }

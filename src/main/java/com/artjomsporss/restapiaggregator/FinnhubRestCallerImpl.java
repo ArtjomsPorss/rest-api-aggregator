@@ -17,6 +17,17 @@ import java.util.List;
 import java.util.Map;
 
 
+/**
+ * This class is setup to call external api of Finnhub
+ *
+ * class expects external.properties containing:
+ * finnhub.token=your_finnhub_token (get your token at https://finnhub.io/)
+ *
+ * spring.data.mongodb.database=your_db_name
+ * spring.data.mongodb.username=your_db_user
+ * spring.data.mongodb.password=db_user_password
+ *
+ */
 @Service
 @EnableScheduling
 // expects a properties file outside main folder

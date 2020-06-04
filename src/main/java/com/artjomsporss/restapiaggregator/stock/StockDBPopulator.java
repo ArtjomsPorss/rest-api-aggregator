@@ -1,6 +1,8 @@
 package com.artjomsporss.restapiaggregator.stock;
 
 import com.artjomsporss.restapiaggregator.FinnHubRestCaller;
+import com.artjomsporss.restapiaggregator.common.ApiElement;
+import com.artjomsporss.restapiaggregator.crypto.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +22,9 @@ import java.util.Optional;
  * The goal of this service is prepopulate db (if required)
  * with absolutely necessary data such as exchanges and stocks.
  * This data will be used later to query using cron job
+ *
+ * TODO looks like either @EventListener or @Scheduled runs method in a separate thread.
+ * TODO To make @EventListener annotated methods run synchronously, try calling them from @PostConstruct annotated method instead.
  */
 @Service
 public class StockDBPopulator {
@@ -28,11 +35,17 @@ public class StockDBPopulator {
     @Autowired
     FinnHubRestCaller api;
     @Autowired
-    StockExchangeRepository exchangeRepo;
+    StockExchangeRepository stockExchangeRepo;
     @Autowired
-    StockSymbolRepository symbolRepository;
+    StockSymbolRepository stockSymbolRepository;
     @Autowired
-    StockQuoteRepository quoteRepository;
+    StockQuoteRepository stockQuoteRepository;
+    @Autowired
+    CryptoExchangeRepository cryptoExchangeRepo;
+    @Autowired
+    private CryptoSymbolRepository cryptoSymbolRepo;
+    @Autowired
+    private CryptoCandleRepository cryptoCandleRepo;
 
 
     @EventListener(ApplicationPreparedEvent.class)
@@ -73,73 +86,137 @@ public class StockDBPopulator {
     @Order(1)
     public void populateExchangeList() {
         // check if db was populated today already, if not - clear and get new data
-        List exList = exchangeRepo.findAll();
+        List exList = stockExchangeRepo.findAll();
         if(null != exList) {
-            Optional<StockExchange> el = exList.stream().findFirst();
-            if(el.isPresent() && el.get().getDate().getDayOfMonth() == LocalDateTime.now().getDayOfMonth()) {
+            if(isDateToday(exList)) {
                 //was populated today - skip
                 return;
             }
         }
-        exList = api.getExchangeList();
-        exList = exchangeRepo.saveAll(exList);
-        log.info("ADDED TO DB:");
-        exList.forEach(e -> log.info(e.toString()));
+        exList = api.getStockExchangeList();
+        exList = stockExchangeRepo.saveAll(exList);
+        log.info("Saved Stock Echanges:");
+        exList.forEach(e -> {log.info(e.toString());});
     }
 
     /**
      * Happens FIRST before ApplicationReadyEvent
+     * TODO some exchanges don't have stock data -ignore them
      */
-    @EventListener(ApplicationStartedEvent.class)
-    @Order(2)
-    public void populateStockList() {
+//    @EventListener(ApplicationStartedEvent.class)
+//    @Order(2)
+    public void populateStockSymbolList() {
         // check if db was populated today already, if not - clear and get new data
-        List<StockExchange> exList = exchangeRepo.findAll();
+        List<StockExchange> exList = stockExchangeRepo.findAll();
 
         try {
             exList.forEach(e -> {
-                List ssList = symbolRepository.findByExchangeCode(e.getCode());
-                // checking for null here must be covered by unit tests
-                Optional<StockSymbol> el = ssList.stream().findFirst();
-                if (el.isPresent() && el.get().getDate().getDayOfMonth() == LocalDateTime.now().getDayOfMonth()) {
+                List<StockSymbol> ssList = stockSymbolRepository.findByExchangeCode(e.getCode());
+                if (isDateToday(ssList)) {
                     //was populated today - skip
                     return;
                 }
                 // delete symbols for current exchange code
-                symbolRepository.deleteByExchangeCode(e.getCode());
+                stockSymbolRepository.deleteByExchangeCode(e.getCode());
                 // populate symbol with exchange code (IMPORTANT for further linking Stocks to Exchanges)
                 List<StockSymbol> symList = api.getStockSymbolList(e.getCode());
                 symList.parallelStream().forEach(s -> {
                     s.setExchangeCode(e.getCode());
                 });
                 // save Stock Symbols
-                symList = symbolRepository.saveAll(symList);
+                symList = stockSymbolRepository.saveAll(symList);
                 log.info(String.format("Saved %d Stock Symbols for %s exchange", symList.size(), e.getCode()));
             });
-        } catch (HttpClientErrorException hce) {
+        } catch (HttpClientErrorException hce) { //TODO replace with a framework that calculates call per minute, calls, maybe: handles error and waits accordingly
             // if too many requests, sleep for a minute and continue
             if(hce.getMessage().contains(HTTP_TOO_MANY_REQUESTS)) {
                 sleep();
-                populateStockList();
+                populateStockSymbolList();
             }
         }
+    }
+
+    /**
+     * Populate db with crypto exchanges that
+     */
+    @EventListener(ApplicationStartedEvent.class)
+    @Order(3)
+    public void populateCryptoExchangeList() {
+        List<CryptoExchange> ceList = cryptoExchangeRepo.findAll();
+        if(this.isDateToday(ceList)){
+            return;
+        }
+        ceList = api.getCryptoExchanges();
+        cryptoExchangeRepo.deleteAll();
+        ceList = cryptoExchangeRepo.saveAll(ceList);
+        log.info("Saved Crypto Echanges");
+        ceList.forEach(e -> log.info(e.toString()));
+    }
+
+    /**
+     * Populate crypto currencies for all exchanges
+     */
+    @EventListener(ApplicationStartedEvent.class)
+    @Order(4)
+    public void populateCryptoSymbolList() {
+        List<CryptoExchange> ceList = cryptoExchangeRepo.findAll();
+        try {
+            ceList.forEach(ce -> {
+                List<CryptoSymbol> csList = cryptoSymbolRepo.findByExchangeName(ce.getExchangeName());
+                // if symbols for current exchanges were updated today - skip
+                if (isDateToday(csList)) {
+                    return;
+                }
+                csList = api.getCryptoSymbols(ce.getExchangeName());
+                // exchange may be needed to set for future referencing
+                csList.forEach(e -> e.setExchangeName(ce.getExchangeName()));
+                // delete old data, if present
+                cryptoSymbolRepo.deleteByExchangeName(ce.getExchangeName());
+                // save new data
+                csList = cryptoSymbolRepo.saveAll(csList);
+                // logging
+                log.info("Saved Crypto Echanges");
+                csList.forEach(cs -> log.info(cs.toString()));
+            });
+        } catch (HttpClientErrorException hce) { //TODO replace with a framework that calculates call per minute, calls, maybe: handles error and waits accordingly
+                // if too many requests, sleep for a minute and continue
+                if(hce.getMessage().contains(HTTP_TOO_MANY_REQUESTS)) {
+                    sleep();
+                    populateCryptoSymbolList();
+                }
+        }
+    }
+
+    @EventListener(ApplicationStartedEvent.class)
+    @Order(5)
+    public void getCryptoCandles() {
+//    public void getCryptoCandles(String exchange, String symbol, String resolution, long from, long to) {
+        long t1 = LocalDateTime.of(2020, 06, 04,21,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+        long t2 = LocalDateTime.of(2020, 06, 04,21,15).atZone(ZoneId.systemDefault()).toEpochSecond();
+//TODO org.springframework.web.client.RestClientException: Could not extract response: no suitable HttpMessageConverter found for response type [class com.artjomsporss.restapiaggregator.crypto.CryptoCandle] and content type [text/html;charset=utf-8]
+        CryptoCandle cc = api.getCryptoCandles("HITBTC","SBTCBTC", CryptoCandle.MINUTE_15, t1, t2);
+//        cc = cryptoCandleRepo.save(cc);
+    }
+
+    //    @Scheduled(fixedDelay = 1000)
+    public void getQuotes() {
+        StockQuote quote = api.getStockQuote("BIRG.IR");
+        quote = stockQuoteRepository.save(quote);
+        System.out.println(quote);
     }
 
     private void sleep() {
         final long sleepTime = 60000;
         try {
-            log.info(String.format("Sleeping for %d...", sleepTime));
+            log.info(String.format("Sleeping for %d seconds...", sleepTime/1000));
             Thread.sleep(sleepTime);
         } catch (InterruptedException ie) {
             log.info(String.format("Sleep for %d seconds got interrupted - InterruptedException", sleepTime));
         }
     }
 
-
-//    @Scheduled(fixedDelay = 1000)
-    public void getQuotes() {
-        StockQuote quote = api.getQuote("BIRG.IR");
-        quote = quoteRepository.save(quote);
-        System.out.println(quote);
+    private boolean isDateToday(List<? extends ApiElement> list) {
+        Optional<? extends ApiElement> el = list.stream().findFirst();
+        return el.isPresent() && el.get().getDate().getDayOfMonth() == LocalDateTime.now().getDayOfMonth();
     }
 }

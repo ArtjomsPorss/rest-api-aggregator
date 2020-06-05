@@ -1,6 +1,6 @@
 package com.artjomsporss.restapiaggregator;
 
-import com.artjomsporss.restapiaggregator.crypto.CryptoCandle;
+import com.artjomsporss.restapiaggregator.crypto.ApiCryptoCandle;
 import com.artjomsporss.restapiaggregator.crypto.CryptoExchange;
 import com.artjomsporss.restapiaggregator.crypto.CryptoSymbol;
 import com.artjomsporss.restapiaggregator.stock.StockExchange;
@@ -101,8 +101,8 @@ public class FinnhubRestCallerImpl implements FinnHubRestCaller {
     }
 
     @Override
-    public CryptoCandle getCryptoCandles(String exchange, String symbol, String resolution, long from, long to) {
-        return rest.getForObject(String.format(URL + "candle?symbol=%s:%s&resolution=%s&from=%d&to=%d&token=%s", exchange, symbol, resolution, from, to, token), CryptoCandle.class);
+    public ApiCryptoCandle getCryptoCandles(String exchange, String symbol, String resolution, long from, long to) {
+        return rest.getForObject(String.format(URL + "crypto/candle?symbol=%s:%s&resolution=%s&from=%d&to=%d&token=%s", exchange, symbol, resolution, from, to, token), ApiCryptoCandle.class);
     }
 
     protected Map <String, String> params(String k, String v) {

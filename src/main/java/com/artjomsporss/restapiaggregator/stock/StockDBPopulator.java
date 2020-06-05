@@ -14,7 +14,6 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 
@@ -191,11 +190,68 @@ public class StockDBPopulator {
     @Order(5)
     public void getCryptoCandles() {
 //    public void getCryptoCandles(String exchange, String symbol, String resolution, long from, long to) {
-        long t1 = LocalDateTime.of(2020, 06, 04,21,0).atZone(ZoneId.systemDefault()).toEpochSecond();
-        long t2 = LocalDateTime.of(2020, 06, 04,21,15).atZone(ZoneId.systemDefault()).toEpochSecond();
-//TODO org.springframework.web.client.RestClientException: Could not extract response: no suitable HttpMessageConverter found for response type [class com.artjomsporss.restapiaggregator.crypto.CryptoCandle] and content type [text/html;charset=utf-8]
-        CryptoCandle cc = api.getCryptoCandles("HITBTC","SBTCBTC", CryptoCandle.MINUTE_15, t1, t2);
+        long t1 = LocalDateTime.of(2020, 06, 1,0,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+        long t2 = LocalDateTime.of(2020, 06, 1,1,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+        ApiCryptoCandle cc = api.getCryptoCandles("BINANCE","FUNBTC", ApiCryptoCandle.MINUTE_1, t1, t2);
+        log.info(cc.toString());
+
+        t1 = LocalDateTime.of(2020, 06, 1,0,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+        t2 = LocalDateTime.of(2020, 06, 1,1,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+        cc = api.getCryptoCandles("BINANCE","FUNBTC", ApiCryptoCandle.MINUTE_5, t1, t2);
+        log.info(cc.toString());
+
+        t1 = LocalDateTime.of(2020, 06, 1,0,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+        t2 = LocalDateTime.of(2020, 06, 1,1,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+        cc = api.getCryptoCandles("BINANCE","FUNBTC", ApiCryptoCandle.MINUTE_15, t1, t2);
+        log.info(cc.toString());
+
+        t1 = LocalDateTime.of(2020, 06, 1,0,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+        t2 = LocalDateTime.of(2020, 06, 1,1,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+        cc = api.getCryptoCandles("BINANCE","FUNBTC", ApiCryptoCandle.MINUTE_30, t1, t2);
+        log.info(cc.toString());
+
+        t1 = LocalDateTime.of(2020, 06, 1,0,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+        t2 = LocalDateTime.of(2020, 06, 1,1,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+        cc = api.getCryptoCandles("BINANCE","FUNBTC", ApiCryptoCandle.MINUTE_60, t1, t2);
+        log.info(cc.toString());
+
+        t1 = LocalDateTime.of(2020, 06, 1,0,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+        t2 = LocalDateTime.of(2020, 06, 1,1,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+        cc = api.getCryptoCandles("BINANCE","FUNBTC", ApiCryptoCandle.DAY, t1, t2);
+        log.info(cc.toString());
+
+        t1 = LocalDateTime.of(2020, 06, 1,0,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+        t2 = LocalDateTime.of(2020, 06, 1,1,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+        cc = api.getCryptoCandles("BINANCE","FUNBTC", ApiCryptoCandle.WEEK, t1, t2);
+        log.info(cc.toString());
+
+        t1 = LocalDateTime.of(2020, 06, 1,0,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+        t2 = LocalDateTime.of(2020, 06, 1,1,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+        cc = api.getCryptoCandles("BINANCE","FUNBTC", ApiCryptoCandle.MONTH, t1, t2);
+        log.info(cc.toString());
+
+//        cryptoSymbolRepo.findAll().forEach(s -> {
+//            List<String> periods = List.of(CryptoCandle.MINUTE_1, CryptoCandle.MINUTE_5, CryptoCandle.MINUTE_15, CryptoCandle.MINUTE_30, CryptoCandle.MINUTE_60, CryptoCandle.DAY, CryptoCandle.MONTH);
+//            periods.forEach(p -> {
+//                try {
+//                    CryptoCandle cc = api.getCryptoCandles(s.getExchangeName(), s.getSymbol(), p, t1, t2);
+//                    // if data returned, save it
+//                    if(cc.getS() == CryptoCandle.RESPONSE_OK) {
+//                        log.info("candle found: " + cc.toString());
+//                        cryptoCandleRepo.save(cc);
+//                    }
+//                    log.info("candle not found");
+//                } catch(HttpClientErrorException hce) {
+//                    sleep();
+//                } catch(RestClientException rce) {
+//
+//                }
+//            });
+//        });
+
+
 //        cc = cryptoCandleRepo.save(cc);
+//        log.info(cc.toString());
     }
 
     //    @Scheduled(fixedDelay = 1000)

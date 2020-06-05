@@ -1,6 +1,6 @@
 package com.artjomsporss.restapiaggregator;
 
-import com.artjomsporss.restapiaggregator.crypto.CryptoCandle;
+import com.artjomsporss.restapiaggregator.crypto.ApiCryptoCandle;
 import com.artjomsporss.restapiaggregator.crypto.CryptoExchange;
 import com.artjomsporss.restapiaggregator.crypto.CryptoSymbol;
 import com.artjomsporss.restapiaggregator.stock.StockExchange;
@@ -42,5 +42,5 @@ public interface FinnHubRestCaller {
      */
     List<CryptoSymbol> getCryptoSymbols(String exchange);
 
-    CryptoCandle getCryptoCandles(String exchange, String symbol, String resolution, long from, long to);
+    ApiCryptoCandle getCryptoCandles(String exchange, String symbol, String resolution, long from, long to);
 }

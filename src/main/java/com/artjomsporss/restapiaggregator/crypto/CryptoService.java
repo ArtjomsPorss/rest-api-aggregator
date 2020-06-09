@@ -48,8 +48,7 @@ public class CryptoService {
         // query
         AggregationResults<CryptoSymbol> aggregation = mongoTemplate.aggregate(agg, "cryptoSymbol", CryptoSymbol.class);
         List<CryptoSymbol> aggregatedSymbols = aggregation.getMappedResults();
-//        cryptoCandleRepository.findAll(Example.of)
+        
         return aggregatedSymbols;
-
     }
 }

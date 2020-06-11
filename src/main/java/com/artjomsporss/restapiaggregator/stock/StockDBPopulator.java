@@ -190,45 +190,45 @@ public class StockDBPopulator {
     @Order(5)
     public void getCryptoCandles() {
 //    public void getCryptoCandles(String exchange, String symbol, String resolution, long from, long to) {
-        long t1 = LocalDateTime.of(2020, 06, 1,0,0).atZone(ZoneId.systemDefault()).toEpochSecond();
-        long t2 = LocalDateTime.of(2020, 06, 1,1,0).atZone(ZoneId.systemDefault()).toEpochSecond();
-        ApiCryptoCandle cc = api.getCryptoCandles("BINANCE","FUNBTC", ApiCryptoCandle.MINUTE_1, t1, t2);
-        log.info(cc.toString());
-
-        t1 = LocalDateTime.of(2020, 06, 1,0,0).atZone(ZoneId.systemDefault()).toEpochSecond();
-        t2 = LocalDateTime.of(2020, 06, 1,1,0).atZone(ZoneId.systemDefault()).toEpochSecond();
-        cc = api.getCryptoCandles("BINANCE","FUNBTC", ApiCryptoCandle.MINUTE_5, t1, t2);
-        log.info(cc.toString());
-
-        t1 = LocalDateTime.of(2020, 06, 1,0,0).atZone(ZoneId.systemDefault()).toEpochSecond();
-        t2 = LocalDateTime.of(2020, 06, 1,1,0).atZone(ZoneId.systemDefault()).toEpochSecond();
-        cc = api.getCryptoCandles("BINANCE","FUNBTC", ApiCryptoCandle.MINUTE_15, t1, t2);
-        log.info(cc.toString());
-
-        t1 = LocalDateTime.of(2020, 06, 1,0,0).atZone(ZoneId.systemDefault()).toEpochSecond();
-        t2 = LocalDateTime.of(2020, 06, 1,1,0).atZone(ZoneId.systemDefault()).toEpochSecond();
-        cc = api.getCryptoCandles("BINANCE","FUNBTC", ApiCryptoCandle.MINUTE_30, t1, t2);
-        log.info(cc.toString());
-
-        t1 = LocalDateTime.of(2020, 06, 1,0,0).atZone(ZoneId.systemDefault()).toEpochSecond();
-        t2 = LocalDateTime.of(2020, 06, 1,1,0).atZone(ZoneId.systemDefault()).toEpochSecond();
-        cc = api.getCryptoCandles("BINANCE","FUNBTC", ApiCryptoCandle.MINUTE_60, t1, t2);
-        log.info(cc.toString());
-
-        t1 = LocalDateTime.of(2020, 06, 1,0,0).atZone(ZoneId.systemDefault()).toEpochSecond();
-        t2 = LocalDateTime.of(2020, 06, 1,1,0).atZone(ZoneId.systemDefault()).toEpochSecond();
-        cc = api.getCryptoCandles("BINANCE","FUNBTC", ApiCryptoCandle.DAY, t1, t2);
-        log.info(cc.toString());
-
-        t1 = LocalDateTime.of(2020, 06, 1,0,0).atZone(ZoneId.systemDefault()).toEpochSecond();
-        t2 = LocalDateTime.of(2020, 06, 1,1,0).atZone(ZoneId.systemDefault()).toEpochSecond();
-        cc = api.getCryptoCandles("BINANCE","FUNBTC", ApiCryptoCandle.WEEK, t1, t2);
-        log.info(cc.toString());
-
-        t1 = LocalDateTime.of(2020, 06, 1,0,0).atZone(ZoneId.systemDefault()).toEpochSecond();
-        t2 = LocalDateTime.of(2020, 06, 1,1,0).atZone(ZoneId.systemDefault()).toEpochSecond();
-        cc = api.getCryptoCandles("BINANCE","FUNBTC", ApiCryptoCandle.MONTH, t1, t2);
-        log.info(cc.toString());
+//        long t1 = LocalDateTime.of(2020, 06, 1,0,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+//        long t2 = LocalDateTime.of(2020, 06, 1,1,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+//        ApiCryptoCandle cc = api.getCryptoCandles("BINANCE:FUNBTC", ApiCryptoCandle.MINUTE_1, t1, t2);
+//        log.info(cc.toString());
+//
+//        t1 = LocalDateTime.of(2020, 06, 1,0,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+//        t2 = LocalDateTime.of(2020, 06, 1,1,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+//        cc = api.getCryptoCandles("BINANCE:FUNBTC", ApiCryptoCandle.MINUTE_5, t1, t2);
+//        log.info(cc.toString());
+//
+//        t1 = LocalDateTime.of(2020, 06, 1,0,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+//        t2 = LocalDateTime.of(2020, 06, 1,1,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+//        cc = api.getCryptoCandles("BINANCE:FUNBTC", ApiCryptoCandle.MINUTE_15, t1, t2);
+//        log.info(cc.toString());
+//
+//        t1 = LocalDateTime.of(2020, 06, 1,0,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+//        t2 = LocalDateTime.of(2020, 06, 1,1,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+//        cc = api.getCryptoCandles("BINANCE:FUNBTC", ApiCryptoCandle.MINUTE_30, t1, t2);
+//        log.info(cc.toString());
+//
+//        t1 = LocalDateTime.of(2020, 06, 1,0,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+//        t2 = LocalDateTime.of(2020, 06, 1,1,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+//        cc = api.getCryptoCandles("BINANCE:FUNBTC", ApiCryptoCandle.MINUTE_60, t1, t2);
+//        log.info(cc.toString());
+//
+//        t1 = LocalDateTime.of(2020, 06, 1,0,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+//        t2 = LocalDateTime.of(2020, 06, 1,1,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+//        cc = api.getCryptoCandles("BINANCE:FUNBTC", ApiCryptoCandle.DAY, t1, t2);
+//        log.info(cc.toString());
+//
+//        t1 = LocalDateTime.of(2020, 06, 1,0,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+//        t2 = LocalDateTime.of(2020, 06, 1,1,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+//        cc = api.getCryptoCandles("BINANCE:FUNBTC", ApiCryptoCandle.WEEK, t1, t2);
+//        log.info(cc.toString());
+//
+//        t1 = LocalDateTime.of(2020, 06, 1,0,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+//        t2 = LocalDateTime.of(2020, 06, 1,1,0).atZone(ZoneId.systemDefault()).toEpochSecond();
+//        cc = api.getCryptoCandles("BINANCE:FUNBTC", ApiCryptoCandle.MONTH, t1, t2);
+//        log.info(cc.toString());
 
 //        cryptoSymbolRepo.findAll().forEach(s -> {
 //            List<String> periods = List.of(CryptoCandle.MINUTE_1, CryptoCandle.MINUTE_5, CryptoCandle.MINUTE_15, CryptoCandle.MINUTE_30, CryptoCandle.MINUTE_60, CryptoCandle.DAY, CryptoCandle.MONTH);

@@ -63,6 +63,12 @@ public class ApiCryptoCandle {
      */
     String[] v;
 
+
+    /**
+     * Additional field to pass on exchangeSymbol
+     */
+    private String exchangeSymbol;
+
     /**
      * Create a list of List<CryptoCandle> from the values in the arrays of this ApiCryptoCandle object
      * @return
@@ -81,10 +87,14 @@ public class ApiCryptoCandle {
                 cc.setO(o[i]);
                 cc.setT(t[i]);
                 cc.setV(v[i]);
+                cc.setSymbol(exchangeSymbol);
                 list.add(cc);
             }
         }
         return list;
     }
 
+    public void setExchangeSymbol(String exchangeSymbol) {
+        this.exchangeSymbol = exchangeSymbol;
+    }
 }

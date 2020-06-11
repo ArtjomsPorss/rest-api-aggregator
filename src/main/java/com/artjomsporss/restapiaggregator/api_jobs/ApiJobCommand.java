@@ -8,8 +8,9 @@ import org.springframework.web.client.HttpClientErrorException;
  */
 public interface ApiJobCommand {
     /**
-     * Executes job using stored data
-     * @throws HttpClientErrorException if rest api reached call limit
+     * Executes the job using encapsulated fields.
+     * Used primarily to queue jobs for execution.
+     * @return true if job was executed, false otherwise
      */
-    void execute() throws HttpClientErrorException;
+    boolean execute();
 }

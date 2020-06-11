@@ -18,30 +18,35 @@ public class CryptoCandle {
     /**
      * close price for returned candle
      */
-    String c;
+    private String c;
 
     /**
      * high price for returned candle
      */
-    String h;
+    private String h;
 
     /**
      * low price for returned candle
      */
-    String l;
+    private String l;
 
     /**
      * open price for returned candle
      */
-    String o;
+    private String o;
 
     /**
      * timestamp of returned candle
      */
-    String t;
+    private String t;
 
     /**
      * volume data for returned candle
      */
-    String v;
+    private String v;
+
+    /**
+     * Stores the symbol of cryptocurrency, related to CryptoSymbol.class
+     */
+    private String symbol;
 }

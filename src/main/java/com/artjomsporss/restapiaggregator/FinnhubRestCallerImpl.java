@@ -6,6 +6,8 @@ import com.artjomsporss.restapiaggregator.crypto.CryptoSymbol;
 import com.artjomsporss.restapiaggregator.stock.StockExchange;
 import com.artjomsporss.restapiaggregator.stock.StockQuote;
 import com.artjomsporss.restapiaggregator.stock.StockSymbol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -36,6 +38,8 @@ import java.util.stream.Collectors;
 // expects a properties file outside main folder
 @PropertySource("file:../external.properties")
 public class FinnhubRestCallerImpl implements FinnHubRestCaller {
+
+    private final Logger log = LoggerFactory.getLogger(FinnhubRestCallerImpl.class);
 
     // comes from external.properties
     @Value("${finnhub.token}")
@@ -101,8 +105,11 @@ public class FinnhubRestCallerImpl implements FinnHubRestCaller {
     }
 
     @Override
-    public ApiCryptoCandle getCryptoCandles(String exchange, String symbol, String resolution, long from, long to) {
-        return rest.getForObject(String.format(URL + "crypto/candle?symbol=%s:%s&resolution=%s&from=%d&to=%d&token=%s", exchange, symbol, resolution, from, to, token), ApiCryptoCandle.class);
+    public ApiCryptoCandle getCryptoCandles(String exchangeSymbol, String resolution, String from, String to) {
+        log.debug(String.format("Calling for cryptocandles using exchangeSymbol[%s], resolution[%s], from[%s], to[%s]", exchangeSymbol, resolution, from, to));
+        ApiCryptoCandle candleObject = rest.getForObject(String.format(URL + "crypto/candle?symbol=%s&resolution=%s&from=%s&to=%s&token=%s", exchangeSymbol, resolution, from, to, token), ApiCryptoCandle.class);
+        candleObject.setExchangeSymbol(exchangeSymbol);
+        return candleObject;
     }
 
     protected Map <String, String> params(String k, String v) {

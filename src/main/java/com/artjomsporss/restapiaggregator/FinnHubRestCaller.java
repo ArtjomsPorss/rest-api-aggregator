@@ -42,5 +42,13 @@ public interface FinnHubRestCaller {
      */
     List<CryptoSymbol> getCryptoSymbols(String exchange);
 
-    ApiCryptoCandle getCryptoCandles(String exchange, String symbol, String resolution, long from, long to);
+    /**
+     * Get cryptocandles using provided data
+     * @param exchangeSymbol for which get candles
+     * @param resolution differs from seconds to days, months e.g: 1, 5, 15, 30, 60, D, W, M
+     * @param from when to get candles
+     * @param to when get candles
+     * @return a list of candles
+     */
+    ApiCryptoCandle getCryptoCandles(String exchangeSymbol, String resolution, String from, String to);
 }

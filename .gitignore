@@ -33,3 +33,4 @@ build/
 LOG.txt
 *LOG*.txt
 *LOG*.gz
+*.tmp

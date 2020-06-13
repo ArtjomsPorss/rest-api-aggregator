@@ -1,6 +1,4 @@
-package com.artjomsporss.restapiaggregator.api_jobs;
-
-import org.springframework.web.client.HttpClientErrorException;
+package com.artjomsporss.restapiaggregator.finnhub_api;
 
 /**
  * Encapsulates API call with corresponding dependencies.

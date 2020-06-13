@@ -1,11 +1,14 @@
 package com.artjomsporss.restapiaggregator.crypto;
 
 import com.artjomsporss.restapiaggregator.FinnHubRestCaller;
-import com.artjomsporss.restapiaggregator.api_jobs.ApiJobCommand;
+import com.artjomsporss.restapiaggregator.finnhub_api.ApiJobCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoField;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,6 +44,12 @@ public class CryptoCandleCommand implements ApiJobCommand {
     @Override
     public boolean execute() {
         try {
+            /*
+            TODO generateTimes() is used temporarily for testing - getting last 8 hours only to see how well the data is populated on Finnhub.
+            Time is generated dynamically because it allows to actually catch the latest data
+             */
+            generateTimes();
+
             ApiCryptoCandle candleObject = restCaller.getCryptoCandles(exchangeSymbol, resolution, from, to);
             List<CryptoCandle> candles = candleObject.getCandles();
             log.debug(String.format("Symbol[%s] candles received[%d]", candleObject.getExchangeSymbol(), candles.size()));
@@ -51,5 +60,10 @@ public class CryptoCandleCommand implements ApiJobCommand {
         } catch (HttpClientErrorException hce) {
             return false;
         }
+    }
+
+    private void generateTimes() {
+        this.from = Long.toString(LocalDateTime.now().truncatedTo(ChronoField.MINUTE_OF_HOUR.getBaseUnit()).minusHours(9).minusMinutes(15).toEpochSecond(ZoneOffset.UTC));
+        this.to = Long.toString(LocalDateTime.now().truncatedTo(ChronoField.MINUTE_OF_HOUR.getBaseUnit()).toEpochSecond(ZoneOffset.UTC));
     }
 }

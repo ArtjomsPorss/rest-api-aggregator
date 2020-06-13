@@ -1,15 +1,13 @@
-package com.artjomsporss.restapiaggregator;
+package com.artjomsporss.restapiaggregator.scheduler;
 
-import com.artjomsporss.restapiaggregator.api_jobs.ApiJobCommand;
+import com.artjomsporss.restapiaggregator.finnhub_api.ApiJobCommand;
 import com.artjomsporss.restapiaggregator.crypto.CryptoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
@@ -18,18 +16,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
-public class FinnhubRestScheduler {
+public class FinnhubRestScheduler extends RemoteAPIJobScheduler {
     private final Logger log = LoggerFactory.getLogger(FinnhubRestScheduler.class);
-
-    @Value("${sleeptime}")
-    private Long sleepTime;
 
     @Autowired
     private CryptoService cryptoService;
 
-
-    //TODO  jobqueue
-    Queue<ApiJobCommand> jobQueue;
+    private Queue<ApiJobCommand> jobQueue;
 
     private int callcount;
 
@@ -49,9 +42,7 @@ public class FinnhubRestScheduler {
             call executed - pop it off the queue
             go back to checking the queue
  */
-    //TODO method at application start
-    //TODO make this using event listener instead of looping
-    @EventListener(ApplicationStartedEvent.class)
+//    @EventListener(ApplicationStartedEvent.class)
     public void startAggregationJob() {
         do {
             try {
@@ -69,7 +60,8 @@ public class FinnhubRestScheduler {
                     }
                 }
             } catch(Exception e) {
-                log.error("Unexpected error: " + e.getMessage());
+                log.error("Unexpected error");
+                e.printStackTrace();
             }
         } while(true);
     }
@@ -95,11 +87,13 @@ public class FinnhubRestScheduler {
      */
     private Collection<? extends ApiJobCommand> getHourlyCandleJobs(int amountOfJobs) {
         // resolution in minutes
-        final String resolution = "60";
+        final String resolution = "1";
 
         List<ApiJobCommand> gatheredCandleJobs = new ArrayList<>(amountOfJobs);
+        //
+        //TODO temporarily added minusWeeks(1)
         // now 11:59 / 12:00 / 12:31
-        LocalDateTime toDate = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS).minusDays(1);   // 11:00 / 12:00 / 12:00
+        LocalDateTime toDate = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS).minusYears(1);   // 11:00 / 12:00 / 12:00
         LocalDateTime fromDate = toDate.minusHours(1); // 10:00 / 11:00 / 11:00
         toDate = toDate.minusMinutes(1); // 10:59 / 11:59 / 11:59
 
@@ -112,15 +106,6 @@ public class FinnhubRestScheduler {
             to = Long.toString(toDate.minusHours(1).toEpochSecond(ZoneOffset.UTC));
         }
         return gatheredCandleJobs;
-    }
-
-    private void sleep() {
-        try {
-            log.debug(String.format("Sleeping for %d seconds...", this.sleepTime/1000));
-            Thread.sleep(sleepTime);
-        } catch (InterruptedException ie) {
-            log.warn(String.format("Sleep for %d seconds got interrupted - InterruptedException", this.sleepTime));
-        }
     }
 
 }

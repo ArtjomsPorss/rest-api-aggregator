@@ -1,24 +1,16 @@
 package com.artjomsporss.restapiaggregator.crypto;
 
 import com.artjomsporss.restapiaggregator.FinnHubRestCaller;
-import com.artjomsporss.restapiaggregator.api_jobs.ApiJobCommand;
+import com.artjomsporss.restapiaggregator.finnhub_api.ApiJobCommand;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.*;
-import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.CriteriaDefinition;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.mongodb.client.model.Filters.elemMatch;
 import static com.mongodb.client.model.Filters.nin;
 
 @Service
